@@ -80,7 +80,11 @@ var UIController = (function() {
         valueType: '.add__value',
         buttonSelector: '.add__btn',
         incomeContainer: '.income__list',
-        expensesContainer: '.expenses__list'
+        expensesContainer: '.expenses__list',
+        budgetValue: '.budget__value',
+        totalInc: '.budget__income--value',
+        totalExp: '.budget__expenses--value',
+        expensesPercentage: '.budget__expenses--percentage'
     }
     return {
         getinput: function() {
@@ -133,8 +137,17 @@ var UIController = (function() {
                 element.value = '';
             });
             fieldsArr[0].focus();
-
         },  
+        displayBudget: function(obj){
+            document.querySelector(DOMstrings.budgetValue).textContent = obj.budget;
+            document.querySelector(DOMstrings.totalInc).textContent = obj.totalInc;
+            document.querySelector(DOMstrings.totalExp).textContent = obj.totalExp;
+            if(obj.percentage > 0){
+                document.querySelector(DOMstrings.expensesPercentage).textContent = obj.percentage;
+            }else {
+                document.querySelector(DOMstrings.expensesPercentage).textContent = '---';
+            }
+        },
         getDOMStrings: function(){
             return DOMstrings;
         }        
@@ -160,7 +173,8 @@ var controller = (function() {
         //2. Return the budget 
         var budget = budgetController.getBudget();
         //3. Display the budget on the UI
-        console.log(budget);
+        
+        UIController.displayBudget(budget);
     };
 
     var ctrlAddItem = function() {
@@ -178,13 +192,21 @@ var controller = (function() {
         UIController.addListItem(newItem, input.type);
         UIController.clearFields();
         //4. Calculate the budget
-        updateBudget();
+         updateBudget();
+        
+
         //5. Display the budget on the UI
     }
 
     return {
         init: function() {
             setupEventListeners();
+            UIController.displayBudget({
+                budget: 0,
+                totalInc: 0,
+                totalExp: 0,
+                percentage: -1
+            })
         }
     }
 })(budgetController, UIController);
